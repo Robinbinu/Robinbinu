@@ -6,7 +6,7 @@
 <br>
 <a href="https://u8views.com/github/Robinbinu"><img src="https://u8views.com/api/v1/github/profiles/91971225/views/day-week-month-total-count.svg"></a>
 <br>
-<img align="centre" width="100%" src="http://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=Robinbinu&theme=github"/>
+<img align="centre" width="100%" src="http://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=Robinbinu&theme=vision-friendly-dark"/>
 <img align="left" width="45%" src="https://github-readme-stats.vercel.app/api?username=Robinbinu&show_icons=true&theme=vision-friendly-dark"/>
 <img align="left" width="45%" src="https://github-readme-stats.vercel.app/api/top-langs/?username=Robinbinu&layout=compact"/>
 

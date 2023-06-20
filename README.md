@@ -3,10 +3,10 @@
 - 🌱 I’m currently learning B.tech - Computer Science Engineering
 - 💞️ I’m looking to collaborate on anything interesting.
 - 📫 Reach me through michael.robink@pec.edu
-
+<a href="https://u8views.com/github/Robinbinu"><img src="https://u8views.com/api/v1/github/profiles/91971225/views/day-week-month-total-count.svg"></a>
 <img align="left" width="45%" src="https://github-readme-stats.vercel.app/api?username=Robinbinu&show_icons=true&theme=vision-friendly-dark"/>
 <img align="left" width="45%" src="https://github-readme-stats.vercel.app/api/top-langs/?username=Robinbinu&layout=compact"/>
-<a href="https://u8views.com/github/Robinbinu"><img src="https://u8views.com/api/v1/github/profiles/91971225/views/day-week-month-total-count.svg"></a>
+
 <!---
 <img align="right" src="https://img.shields.io/badge/c-%2300599C.svg?style=for-the-badge&logo=c&logoColor=white"/>
 

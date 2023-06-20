@@ -9,7 +9,7 @@
 <img align="centre" width="100%" src="http://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=Robinbinu&theme=vision_friendly_dark"/>
 <img align="left" width="45%" src="http://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=Robinbinu&theme=vision_friendly_dark&exclude=default"/>
 <img align="left" width="45%" src="http://github-profile-summary-cards.vercel.app/api/cards/stats?username=Robinbinu&theme=vision_friendly_dark"/>
-<img align="left" width="45%" src="https://github-readme-stats.vercel.app/api/top-langs/?username=Robinbinu&layout=compact"/>
+<img align="centre" width="50%" src="https://github-readme-stats.vercel.app/api/top-langs/?username=Robinbinu&layout=compact"/>
 
 <!---
 <img align="right" src="https://img.shields.io/badge/c-%2300599C.svg?style=for-the-badge&logo=c&logoColor=white"/>

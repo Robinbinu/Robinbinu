@@ -1,4 +1,4 @@
-# 👋 Hi, I’m Robinbinu
+# 👋 Hi, I’m Michael  Robin
 - 👀 I’m interested in unspecific eccentric stuff
 - 🌱 I’m currently learning B.tech - Computer Science Engineering
 - 💞️ I’m looking to collaborate on anything interesting.

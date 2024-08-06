@@ -3,14 +3,21 @@
 - 🌱 I’m currently learning B.tech - Computer Science Engineering
 - 💞️ I’m looking to collaborate on anything interesting.
 - 📫 Reach me through michael.robink@pec.edu
-<br>
+
+<p align="center">
+  <img src="https://media.giphy.com/media/WKdWA04KRn58A/giphy.gif">
+  <img src="https://1.bp.blogspot.com/-lKJKpqe85y4/XVVYr9-WHRI/AAAAAAAAB9M/-h245-Fg-nYbZqvO0RV0tlfhxQ8sqvEawCLcBGAs/s1600/Sampler.gif">
+</p>
+
+<p align="center">
+<!--br>
 <a href="https://u8views.com/github/Robinbinu"><img src="https://u8views.com/api/v1/github/profiles/91971225/views/day-week-month-total-count.svg"></a>
 <br>
 <img align="centre" width="100%" src="http://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=Robinbinu&theme=vision_friendly_dark"/>
 <img align="left" width="45%" src="http://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=Robinbinu&theme=vision_friendly_dark&exclude=default"/>
 <img align="left" width="45%" src="http://github-profile-summary-cards.vercel.app/api/cards/stats?username=Robinbinu&theme=vision_friendly_dark"/>
 <br>
-<img align="centre" width="45%" src="http://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=Robinbinu&theme=vision_friendly_dark&exclude=default"/>
+<!--img align="centre" width="45%" src="http://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=Robinbinu&theme=vision_friendly_dark&exclude=default"/>
 
 <!--img align="centre" width="45%" src="https://github-readme-stats.vercel.app/api/top-langs/?username=Robinbinu&layout=compact"/>
 

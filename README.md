@@ -1,13 +1,13 @@
-# 👋 Hi, I’m Michael  Robin
+<p align="center">
+  <img src="https://1.bp.blogspot.com/-lKJKpqe85y4/XVVYr9-WHRI/AAAAAAAAB9M/-h245-Fg-nYbZqvO0RV0tlfhxQ8sqvEawCLcBGAs/s1600/Sampler.gif">
+</p>
+<!--# 👋 Hi, I’m Michael  Robin
 - 👀 I’m interested in unspecific eccentric stuff
 - 🌱 I’m currently learning B.tech - Computer Science Engineering
 - 💞️ I’m looking to collaborate on anything interesting.
 - 📫 Reach me through michael.robink@pec.edu
 
-<p align="center">
-  <img src="https://media.giphy.com/media/WKdWA04KRn58A/giphy.gif">
-  <img src="https://1.bp.blogspot.com/-lKJKpqe85y4/XVVYr9-WHRI/AAAAAAAAB9M/-h245-Fg-nYbZqvO0RV0tlfhxQ8sqvEawCLcBGAs/s1600/Sampler.gif">
-</p>
+
 
 <p align="center">
 <!--br>

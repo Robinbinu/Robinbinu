@@ -1,7 +1,4 @@
 <p align="center">
-  ## #30NitesOfCode:
-  [Check out my progress!](https://www.codedex.io/@michaelrobink21352/30-nites-of-code)  
-  ![@michaelrobink21352 #30NitesOfCode](https://www.codedex.io/api/petStatus?user=michaelrobink21352)
   <img src="https://1.bp.blogspot.com/-lKJKpqe85y4/XVVYr9-WHRI/AAAAAAAAB9M/-h245-Fg-nYbZqvO0RV0tlfhxQ8sqvEawCLcBGAs/s1600/Sampler.gif">
 </p>
 <!--# 👋 Hi, I’m Michael  Robin

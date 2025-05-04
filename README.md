@@ -12,7 +12,7 @@
 - 🔭 I’m currently working on **cross-platform apps and responsive websites**
 - 🌱 I’m diving deeper into **backend, CI/CD & testing**
 - 💬 Ask me about **Flutter, Dart, JavaScript, or UI/UX**
-- 📫 How to reach me: **michael.robink@example.com**
+- 📫 How to reach me: **michaelrobink@gmail.com**
 - ⚡ Fun fact: *I can write an app before you finish your coffee ☕*
 
 ---
@@ -29,11 +29,11 @@
 
 <p align="center">
   <img src="https://github-readme-stats.vercel.app/api?username=michaelrobink&show_icons=true&theme=tokyonight" height="180"/>
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=michaelrobink&theme=tokyonight" height="180"/>
+  <img src="https://github-readme-streak-stats.herokuapp.com/?user=Robinbinu&theme=tokyonight" height="180"/>
 </p>
 
 <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=michaelrobink&layout=compact&theme=tokyonight" height="180"/>
+  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=Robinbinu&layout=compact&theme=tokyonight" height="180"/>
 </p>
 
 ---
@@ -42,7 +42,7 @@
 
 <p align="left">
   <a href="https://linkedin.com/in/michaelrobink" target="blank"><img align="center" src="https://skillicons.dev/icons?i=linkedin" height="40" /></a>
-  <a href="mailto:michael.robink@example.com"><img align="center" src="https://skillicons.dev/icons?i=gmail" height="40" /></a>
+  <a href="mailto:michael.robink@gmailcom"><img align="center" src="https://skillicons.dev/icons?i=gmail" height="40" /></a>
   <a href="https://twitter.com/michaelrobink" target="blank"><img align="center" src="https://skillicons.dev/icons?i=twitter" height="40" /></a>
 </p>
 

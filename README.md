@@ -1,5 +1,5 @@
 <h1 align="center">👋 Hi, I'm Michael Robin K</h1>
-<h3 align="center">Flutter & Web Developer | Software Engineer</h3>
+<h3 align="center">Software Development Engineer</h3>
 
 <p align="center">
   <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=22&duration=3000&pause=1000&center=true&vCenter=true&width=500&lines=Passionate+Flutter+Developer;Web+Development+Enthusiast;Clean+Code+Advocate;Always+Learning+New+Tech" alt="Typing SVG" />

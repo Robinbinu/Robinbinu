@@ -1,3 +1,8 @@
+<p align="center">
+  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=22&duration=3000&pause=1000&center=true&vCenter=true&width=500&lines=Passionate+Flutter+Developer;Web+Development+Enthusiast;Clean+Code+Advocate;Always+Learning+New+Tech" alt="Typing SVG" />
+</p>
+
+<!--
 <h1 align="center">👋 Hi, I'm Michael Robin K</h1>
 <h3 align="center">Software Development Engineer</h3>
 
@@ -87,3 +92,4 @@
     <li>📲 Release an app to Play Store & App Store</li>
   </ul>
 </details>
+--->

@@ -7,7 +7,7 @@
 </p>
 
 
-<a href="https://u8views.com/github/Robinbinu"><img src="https://u8views.com/api/v1/github/profiles/91971225/views/day-week-month-total-count.svg"></a>
+<!---a href="https://u8views.com/github/Robinbinu"><img src="https://u8views.com/api/v1/github/profiles/91971225/views/day-week-month-total-count.svg"></a>--->
 <!--br>
 <img align="left" width="50%" src="https://github-readme-streak-stats.herokuapp.com?user=Robinbinu&theme=github_dark&hide_border=true"/> --->
 <br>

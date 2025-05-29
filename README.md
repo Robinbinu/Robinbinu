@@ -9,8 +9,9 @@
 
 <a href="https://u8views.com/github/Manogari2003"><img src="https://u8views.com/api/v1/github/profiles/91971225/views/day-week-month-total-count.svg"></a>
 <br>
-<img align="centre" width="100%" src="http://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=Robinbinu"/>
+<img align="centre" width="100%" src="http://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=Robinbinu&theme=github_dark"/>
 <br>
+
 
 <!---
 <img align="right" src="https://img.shields.io/badge/c-%2300599C.svg?style=for-the-badge&logo=c&logoColor=white"/>

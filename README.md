@@ -1,5 +1,6 @@
 <h1 align="center">🧠 Zodsenpai — Software Alchemist ⚡</h1>
 
+
 <p align="center">
   <a href="https://git.io/typing-svg">
     <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&pause=1000&color=00FFAA&center=true&vCenter=true&width=500&lines=//+Cyber-dev+engaged...;Initializing+clean+code+protocols...;Hacking+the+web+with+Astro+JS+%F0%9F%9A%80;Hitting+0ms+w/t+Golang+%F0%9F%9A%80;Always+compiling+new+skills..." alt="Typing SVG" />
@@ -11,6 +12,7 @@
 <!--br>
 <img align="left" width="50%" src="https://github-readme-streak-stats.herokuapp.com?user=Robinbinu&theme=github_dark&hide_border=true"/> --->
 <br>
+<a href="https://u8views.com/github/Robinbinu"><img src="https://u8views.com/api/v1/github/profiles/91971225/views/day-week-month-total-count.svg"></a>
 <img align="centre" width="100%" src="http://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=Robinbinu&theme=github_dark"/>
 <br>
 

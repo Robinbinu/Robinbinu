@@ -1,4 +1,4 @@
-<h1 align="center">🧠 Zodsenpai — Software Alchemist ⚡</h1>
+<h1 align="center">Zodsenpai — Software Alchemist ⚡</h1>
 
 
 <p align="center">

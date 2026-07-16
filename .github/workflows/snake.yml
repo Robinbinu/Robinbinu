@@ -20,6 +20,20 @@ jobs:
           outputs: |
             dist/github-snake.svg
             dist/github-snake-dark.svg?palette=github-dark&color_dots=#0d1117,#0e4429,#006d32,#26a641,#39d353
+      - name: strip stack bar (the "loading bar" at the bottom)
+        run: |
+          python3 - <<'PYEOF'
+          import re, glob
+          for path in glob.glob("dist/*.svg"):
+              s = open(path).read()
+              s = re.sub(r'<rect class="u[^>]*/>', '', s)
+              s = re.sub(r'@keyframes u\w+\{(?:[^{}]*\{[^}]*\})*[^{}]*\}', '', s)
+              s = re.sub(r'\.u(?:\.\w+)?\{[^}]*\}', '', s)
+              s = s.replace('viewBox="-16 -32 880 192" width="880" height="192"',
+                            'viewBox="-16 -32 880 148" width="880" height="148"')
+              open(path, "w").write(s)
+              print(path, "stripped, u-elements left:", len(re.findall(r'class="u', s)))
+          PYEOF
       - uses: crazy-max/ghaction-github-pages@v4
         with:
           target_branch: output

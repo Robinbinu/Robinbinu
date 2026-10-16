@@ -395,15 +395,16 @@ ${keyframes("reveal", (t) => bodyDash(t), (v) => v)}
 @keyframes fade{0%{opacity:1}${pct(TOTAL - 4)}{opacity:.5}${pct(TOTAL - 2)}{opacity:0}100%{opacity:1}}
 .head{filter:drop-shadow(0 0 4px ${theme.accent});animation:head ${DUR} steps(1,end) infinite}
 .target{animation:target ${DUR} steps(1,end) infinite}
-.target rect{animation:blink-target .5s steps(1,end) infinite}
-@keyframes blink-target{0%{opacity:1}50%{opacity:.15}}
+/* The hunted square strobes about three times a second, glowing in its own colour. */
+.target rect{filter:drop-shadow(0 0 5px currentColor);animation:strobe .32s steps(1,end) infinite}
+@keyframes strobe{0%{opacity:1}55%{opacity:0}}
 ${keyframes(
   "target",
   (t) => (t < T ? targets[t] : null),
   (k) => {
     if (!k) return "opacity:0";
     const [x, y] = k.split(",").map(Number);
-    return `opacity:1;transform:translate(${cx(x) - CELL / 2}px,${cy(y) - CELL / 2}px);fill:${colourOf(x, y)}`;
+    return `opacity:1;transform:translate(${cx(x) - CELL / 2}px,${cy(y) - CELL / 2}px);fill:${colourOf(x, y)};color:${colourOf(x, y)}`;
   },
 )}
 ${keyframes("head", (t) => path[Math.min(t, T - 1) + START_LEN - 1], ([x, y]) => `transform:translate(${cx(x) - CELL / 2}px,${cy(y) - CELL / 2}px)`)}

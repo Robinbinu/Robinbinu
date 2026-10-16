@@ -19,8 +19,9 @@ const METER_TOP = PAD + BOARD_H + 22, METER_H = 40, METER_PAD = 16;
 const WIDTH = BOARD_W + PAD * 2, HEIGHT = METER_TOP + METER_PAD + METER_H + 8;
 
 const TICK = 0.05; // seconds per snake move; everything else steps on this beat
-// A retro arcade palette. Each day gets one colour; its contribution level sets the brightness.
-const PALETTE = ["#ff6b1a", "#ffb224", "#ff4d79", "#a78bfa", "#4d9bff", "#00e0b0", "#3ddc84", "#fff36b"];
+// A retro arcade palette, with no orange: orange belongs to the snake. Each day gets one colour;
+// its contribution level sets the brightness.
+const PALETTE = ["#ff4d79", "#a78bfa", "#4d9bff", "#00e0b0", "#3ddc84", "#fff36b"];
 const LEVEL_OPACITY = [0, 0.62, 0.78, 0.9, 1];
 const START_LEN = 3, HOLD = 24;
 // Digestion: a bite is eaten at once, but the body grows by at most one square every DIGEST moves,
@@ -176,6 +177,7 @@ function hunt(seed) {
   let state = { body: [[0, 3], [1, 3], [2, 3]], pending: 0, since: 0 }; // body runs tail to head
   const path = state.body.slice(); // head positions; the first START_LEN form the starting body
   const lengths = [START_LEN]; // body length per tick
+  const targets = []; // square being hunted per tick (null once everything is eaten)
   const eatenAt = new Map(); // food key -> tick
   const remaining = new Set(food.keys());
   // Squares under the starting body vanish at once but do not grow the snake.
@@ -184,6 +186,7 @@ function hunt(seed) {
 
   const pick = () => [...remaining][Math.floor(random() * remaining.size)];
   let target = pick(), stall = 0, stalls = 0;
+  targets.push(target);
   // Hunt until every square is eaten, then keep moving until the backlog is digested.
   while ((remaining.size || state.pending) && stall < 400) {
     const body = state.body;
@@ -197,7 +200,7 @@ function hunt(seed) {
       const route = search(body.at(-1), (k) => k === goal, blocked);
       const after = route && replay(state, route, remaining);
       if (after && escapes(after.body)) {
-        committed = { route, after };
+        committed = { route, after, goal };
         target = goal;
         break;
       }
@@ -214,7 +217,7 @@ function hunt(seed) {
         if (!best || (safe && !best.safe) || (safe === best.safe && space > best.space)) best = { route: [cell], after, safe, space };
       }
       if (!best) break; // boxed in: the run ends here
-      committed = best;
+      committed = { ...best, goal: remaining.size ? target : null };
       stall++, stalls++;
     } else stall = 0;
     for (const cell of committed.route) {
@@ -223,10 +226,11 @@ function hunt(seed) {
       if (committed.after.eaten.includes(k) && remaining.delete(k)) eatenAt.set(k, tickOf(path.length - 1));
     }
     lengths.push(...committed.after.lengths);
+    targets.push(...committed.route.map(() => committed.goal));
     state = committed.after;
     if (!remaining.has(target) && remaining.size) target = pick();
   }
-  return { path, eatenAt, underStart, stalls, lengths, uneaten: remaining.size, undigested: state.pending };
+  return { path, eatenAt, underStart, stalls, lengths, targets, uneaten: remaining.size, undigested: state.pending };
 }
 
 // Prefer runs that eat everything, then runs that finish digesting it.
@@ -237,7 +241,7 @@ for (let attempt = 0; attempt < 40; attempt++) {
   if (!run || shortfall(r) < shortfall(run)) run = r;
   if (!shortfall(run)) break;
 }
-const { path, eatenAt, underStart, stalls, lengths, uneaten } = run;
+const { path, eatenAt, underStart, stalls, lengths, targets, uneaten } = run;
 
 const T = tickOf(path.length - 1) + 1; // ticks of movement
 const TOTAL = T + HOLD;
@@ -390,6 +394,18 @@ ${keyframes("reveal", (t) => bodyDash(t), (v) => v)}
 .snake{animation:fade ${DUR} steps(1,end) infinite}
 @keyframes fade{0%{opacity:1}${pct(TOTAL - 4)}{opacity:.5}${pct(TOTAL - 2)}{opacity:0}100%{opacity:1}}
 .head{filter:drop-shadow(0 0 4px ${theme.accent});animation:head ${DUR} steps(1,end) infinite}
+.target{animation:target ${DUR} steps(1,end) infinite}
+.target rect{animation:blink-target .5s steps(1,end) infinite}
+@keyframes blink-target{0%{opacity:1}50%{opacity:.15}}
+${keyframes(
+  "target",
+  (t) => (t < T ? targets[t] : null),
+  (k) => {
+    if (!k) return "opacity:0";
+    const [x, y] = k.split(",").map(Number);
+    return `opacity:1;transform:translate(${cx(x) - CELL / 2}px,${cy(y) - CELL / 2}px);fill:${colourOf(x, y)}`;
+  },
+)}
 ${keyframes("head", (t) => path[Math.min(t, T - 1) + START_LEN - 1], ([x, y]) => `transform:translate(${cx(x) - CELL / 2}px,${cy(y) - CELL / 2}px)`)}
 .sa{animation:sa ${DUR} steps(1,end) infinite}.sb{animation:sb ${DUR} steps(1,end) infinite}
 ${keyframes("sa", (t) => shimmerA[t], (v) => `opacity:${v}`)}
@@ -405,6 +421,7 @@ text.ro:not([style]){opacity:1}
 </style>
 <g fill="${theme.dots[0]}">${board}</g>
 ${foods}
+<g class="target" opacity="0"><rect width="${CELL}" height="${CELL}"/></g>
 <g class="snake" clip-path="url(#board)" mask="url(#body)">
 <path d="${trail}" fill="none" stroke="url(#paint)" stroke-width="${CELL}" stroke-dasharray="${CELL} ${GAP}" stroke-dashoffset="${CELL / 2}" stroke-linejoin="miter"/>
 <path class="sa" d="${trail}" fill="none" stroke="url(#noiseA)" stroke-width="${CELL}" stroke-dasharray="${CELL} ${GAP}" stroke-dashoffset="${CELL / 2}" stroke-linejoin="miter"/>

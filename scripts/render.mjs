@@ -23,6 +23,9 @@ const TICK = 0.05; // seconds per snake move; everything else steps on this beat
 const PALETTE = ["#ff6b1a", "#ffb224", "#ff4d79", "#a78bfa", "#4d9bff", "#00e0b0", "#3ddc84", "#fff36b"];
 const LEVEL_OPACITY = [0, 0.62, 0.78, 0.9, 1];
 const START_LEN = 3, HOLD = 24;
+// Digestion: a bite is eaten at once, but the body grows by at most one square every DIGEST moves,
+// so a run of squares on a straight line adds length steadily instead of all at once.
+const DIGEST = 4;
 const LEVEL = { NONE: 0, FIRST_QUARTILE: 1, SECOND_QUARTILE: 2, THIRD_QUARTILE: 3, FOURTH_QUARTILE: 4 };
 
 const themes = {
@@ -111,20 +114,25 @@ function search(start, isGoal, blocked) {
 // at least one empty square between them.
 const gapOk = (b) => b.length <= START_LEN || Math.abs(b.at(-1)[0] - b[0][0]) + Math.abs(b.at(-1)[1] - b[0][1]) >= 2;
 
-// Replays moves exactly: eating grows the snake, otherwise the tail advances. Null if the head
-// would hit the body or close the gap to the tail.
-function replay(body, moves, meals) {
-  const b = body.slice(), eaten = [];
+// Replays moves exactly. Bites join a digestion backlog; the tail holds still (the body grows)
+// only when a backlog square is digested, otherwise it advances. Null if the head would hit the
+// body or close the gap to the tail.
+function replay(state, moves, meals) {
+  const b = state.body.slice(), eaten = [], lengths = [];
+  let { pending, since } = state;
   for (const cell of moves) {
-    const k = key(...cell), eats = meals.has(k) && !eaten.includes(k);
-    const occupied = new Set((eats ? b : b.slice(1)).map((c) => key(...c)));
+    const k = key(...cell);
+    if (meals.has(k) && !eaten.includes(k)) eaten.push(k), pending++;
+    const grows = pending > 0 && since >= DIGEST - 1;
+    const occupied = new Set((grows ? b : b.slice(1)).map((c) => key(...c)));
     if (occupied.has(k)) return null;
     b.push(cell);
-    if (eats) eaten.push(k);
-    else b.shift();
+    if (grows) pending--, (since = 0);
+    else b.shift(), since++;
     if (!gapOk(b)) return null;
+    lengths.push(b.length);
   }
-  return { body: b, eaten };
+  return { body: b, eaten, pending, since, lengths };
 }
 
 // Survival test: can the head reach a square of its current body after that square has been
@@ -165,26 +173,29 @@ const tickOf = (i) => i - (START_LEN - 1); // path index -> tick at which the he
 // several seeds are tried and the first run that eats every square is kept (else the best).
 function hunt(seed) {
   const random = () => rand(seed++);
-  let body = [[0, 3], [1, 3], [2, 3]]; // tail to head
-  const path = body.slice(); // head positions; the first START_LEN form the starting body
+  let state = { body: [[0, 3], [1, 3], [2, 3]], pending: 0, since: 0 }; // body runs tail to head
+  const path = state.body.slice(); // head positions; the first START_LEN form the starting body
+  const lengths = [START_LEN]; // body length per tick
   const eatenAt = new Map(); // food key -> tick
   const remaining = new Set(food.keys());
   // Squares under the starting body vanish at once but do not grow the snake.
   const underStart = new Set();
-  for (const c of body) if (remaining.delete(key(...c))) eatenAt.set(key(...c), 0), underStart.add(key(...c));
+  for (const c of state.body) if (remaining.delete(key(...c))) eatenAt.set(key(...c), 0), underStart.add(key(...c));
 
   const pick = () => [...remaining][Math.floor(random() * remaining.size)];
   let target = pick(), stall = 0, stalls = 0;
-  while (remaining.size && stall < 400) {
+  // Hunt until every square is eaten, then keep moving until the backlog is digested.
+  while ((remaining.size || state.pending) && stall < 400) {
+    const body = state.body;
     const order = new Map(body.map((c, j) => [key(...c), j]));
     // A body segment j (0 = tail) has moved on by the time the head makes move j + 1.
     const near = nearTail(body);
     const blocked = (k, step) => (order.has(k) && order.get(k) >= step) || near(k, step);
     let committed = null;
-    for (const goal of [target, ...Array.from({ length: 10 }, pick)]) {
+    for (const goal of remaining.size ? [target, ...Array.from({ length: 10 }, pick)] : []) {
       if (!remaining.has(goal)) continue;
       const route = search(body.at(-1), (k) => k === goal, blocked);
-      const after = route && replay(body, route, remaining);
+      const after = route && replay(state, route, remaining);
       if (after && escapes(after.body)) {
         committed = { route, after };
         target = goal;
@@ -197,7 +208,7 @@ function hunt(seed) {
       for (const [dx, dy] of NEIGHBOURS) {
         const cell = [body.at(-1)[0] + dx, body.at(-1)[1] + dy];
         if (!inside(...cell)) continue;
-        const after = replay(body, [cell], remaining);
+        const after = replay(state, [cell], remaining);
         if (!after) continue;
         const safe = escapes(after.body), space = room(after.body);
         if (!best || (safe && !best.safe) || (safe === best.safe && space > best.space)) best = { route: [cell], after, safe, space };
@@ -211,31 +222,34 @@ function hunt(seed) {
       const k = key(...cell);
       if (committed.after.eaten.includes(k) && remaining.delete(k)) eatenAt.set(k, tickOf(path.length - 1));
     }
-    body = committed.after.body;
+    lengths.push(...committed.after.lengths);
+    state = committed.after;
     if (!remaining.has(target) && remaining.size) target = pick();
   }
-  return { path, eatenAt, underStart, stalls, uneaten: remaining.size };
+  return { path, eatenAt, underStart, stalls, lengths, uneaten: remaining.size, undigested: state.pending };
 }
 
+// Prefer runs that eat everything, then runs that finish digesting it.
+const shortfall = (r) => r.uneaten * 1000 + r.undigested;
 let run;
 for (let attempt = 0; attempt < 40; attempt++) {
   const r = hunt(daySeed + attempt * 7919);
-  if (!run || r.uneaten < run.uneaten) run = r;
-  if (!run.uneaten) break;
+  if (!run || shortfall(r) < shortfall(run)) run = r;
+  if (!shortfall(run)) break;
 }
-const { path, eatenAt, underStart, stalls, uneaten } = run;
+const { path, eatenAt, underStart, stalls, lengths, uneaten } = run;
 
 const T = tickOf(path.length - 1) + 1; // ticks of movement
 const TOTAL = T + HOLD;
 const DUR = `${(TOTAL * TICK).toFixed(2)}s`;
 const pct = (t) => `${((Math.max(0, t) / TOTAL) * 100).toFixed(3)}%`;
 
-// Length per tick: one more square for each bite.
+// Length per tick comes straight from the simulation (digestion included); bites drive the shimmer.
 const bites = [...eatenAt].filter(([k]) => !underStart.has(k)).map(([, t]) => t).sort((a, b) => a - b);
 const lengthAt = [], eatenAtTick = [];
 for (let t = 0, b = 0; t < TOTAL; t++) {
   while (b < bites.length && bites[b] <= t) b++;
-  lengthAt.push(START_LEN + b);
+  lengthAt.push(lengths[Math.min(t, lengths.length - 1)]);
   eatenAtTick.push(b);
 }
 const eatenCountAt = (t) => eatenAtTick[t];

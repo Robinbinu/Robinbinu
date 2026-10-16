@@ -19,11 +19,13 @@ const METER_TOP = PAD + BOARD_H + 22, METER_H = 40, METER_PAD = 16;
 const WIDTH = BOARD_W + PAD * 2, HEIGHT = METER_TOP + METER_PAD + METER_H + 8;
 
 const TICK = 0.05; // seconds per snake move; everything else steps on this beat
-// A retro arcade palette, with no orange: orange belongs to the snake. Each day gets one colour;
-// its contribution level sets the brightness.
+// Colour lives only in motion: the target's strobe and the finale sweep cycle this retro palette,
+// while the board stays in quiet greys and orange belongs to the snake.
 const PALETTE = ["#ff4d79", "#a78bfa", "#4d9bff", "#00e0b0", "#3ddc84", "#fff36b"];
-const LEVEL_OPACITY = [0, 0.62, 0.78, 0.9, 1];
-const START_LEN = 3, HOLD = 24;
+const START_LEN = 3;
+// After the last bite the snake fades and a diffusion sweep crosses the board left to right,
+// refilling each day as it passes, before the hunt starts again. Length in ticks.
+const FINALE = 92;
 // Digestion: a bite is eaten at once, but the body grows by at most one square every DIGEST moves,
 // so a run of squares on a straight line adds length steadily instead of all at once.
 const DIGEST = 4;
@@ -32,7 +34,7 @@ const LEVEL = { NONE: 0, FIRST_QUARTILE: 1, SECOND_QUARTILE: 2, THIRD_QUARTILE: 
 const themes = {
   dark: {
     file: "snake.svg",
-    dots: ["#161b22", "#4a2410", "#82391a", "#c4501a", "#ff6b1a"],
+    dots: ["#161b22", "#2d333b", "#444c56", "#636e7b", "#8b949e"],
     accent: "#ff6b1a",
     bar: "#80858e",
     line: "#1d2025",
@@ -40,7 +42,7 @@ const themes = {
   },
   light: {
     file: "snake-light.svg",
-    dots: ["#ebedf0", "#ffd8c2", "#ffb088", "#ff8a4c", "#ff6b1a"],
+    dots: ["#ebedf0", "#d0d7de", "#afb8c1", "#8c959f", "#6e7781"],
     accent: "#ff6b1a",
     bar: "#8c959f",
     line: "#d0d7de",
@@ -244,7 +246,9 @@ for (let attempt = 0; attempt < 40; attempt++) {
 const { path, eatenAt, underStart, stalls, lengths, targets, uneaten } = run;
 
 const T = tickOf(path.length - 1) + 1; // ticks of movement
-const TOTAL = T + HOLD;
+const TOTAL = T + FINALE;
+// Tick at which the finale sweep reaches a cell: a left-to-right front with some jitter.
+const sweepAt = (x, y) => T + 6 + Math.round(x * 1.1 + rand(x * 31 + y * 17 + 9) * 6);
 const DUR = `${(TOTAL * TICK).toFixed(2)}s`;
 const pct = (t) => `${((Math.max(0, t) / TOTAL) * 100).toFixed(3)}%`;
 
@@ -316,8 +320,6 @@ function noisePattern(id, seed) {
   return `<pattern id="${id}" patternUnits="userSpaceOnUse" x="${PAD}" y="${PAD}" width="${9 * STEP}" height="${7 * STEP}">${cells}</pattern>`;
 }
 
-// Every board cell has a fixed colour; days show it at their level's brightness.
-const colourOf = (x, y) => PALETTE[Math.floor(rand(x * 7 + y * 131 + 5) * PALETTE.length)];
 // The body is orange, each square at a slightly different brightness, like the hero staircase.
 function bodyPattern(accent) {
   let cells = "";
@@ -350,10 +352,19 @@ function render(theme) {
   for (let x = 0; x < COLS; x++)
     for (let y = 0; y < ROWS; y++)
       board += `<rect x="${cx(x) - CELL / 2}" y="${cy(y) - CELL / 2}" width="${CELL}" height="${CELL}"/>`;
+  // Finale overlay: every cell, each starting its flicker when the sweep front reaches it.
+  const colours = [...PALETTE, theme.accent];
+  let sweep = "";
+  for (let x = 0; x < COLS; x++)
+    for (let y = 0; y < ROWS; y++) {
+      const [a, b, c] = [1, 2, 3].map((n) => colours[Math.floor(rand(x * 41 + y * 7 + n * 101) * colours.length)]);
+      const delay = ((sweepAt(x, y) - (T + 6)) * TICK).toFixed(3);
+      sweep += `<rect class="sw" style="--a:${a};--b:${b};--c:${c};animation-delay:${delay}s" x="${cx(x) - CELL / 2}" y="${cy(y) - CELL / 2}" width="${CELL}" height="${CELL}"/>`;
+    }
   const foods = [...food.entries()]
     .map(([k, d], i) => {
       const t = eatenAt.get(k);
-      return `<rect class="food" style="animation-name:f${i}" x="${cx(d.x) - CELL / 2}" y="${cy(d.y) - CELL / 2}" width="${CELL}" height="${CELL}" fill="${colourOf(d.x, d.y)}" fill-opacity="${LEVEL_OPACITY[d.level]}"/><style>@keyframes f${i}{0%{opacity:1}${pct(t)}{opacity:0}${pct(TOTAL - 1)}{opacity:0}100%{opacity:1}}</style>`;
+      return `<rect class="food" style="animation-name:f${i}" x="${cx(d.x) - CELL / 2}" y="${cy(d.y) - CELL / 2}" width="${CELL}" height="${CELL}" fill="${theme.dots[d.level]}"/><style>@keyframes f${i}{0%{opacity:1}${pct(t)}{opacity:0}${pct(sweepAt(d.x, d.y) + 5)}{opacity:1}100%{opacity:1}}</style>`;
     })
     .join("\n");
 
@@ -392,19 +403,25 @@ ${noisePattern("noiseB", 97)}
 .reveal{animation:reveal ${DUR} steps(1,end) infinite}
 ${keyframes("reveal", (t) => bodyDash(t), (v) => v)}
 .snake{animation:fade ${DUR} steps(1,end) infinite}
-@keyframes fade{0%{opacity:1}${pct(TOTAL - 4)}{opacity:.5}${pct(TOTAL - 2)}{opacity:0}100%{opacity:1}}
+@keyframes fade{0%{opacity:1}${pct(T + 2)}{opacity:.6}${pct(T + 4)}{opacity:.3}${pct(T + 6)}{opacity:0}100%{opacity:1}}
 .head{filter:drop-shadow(0 0 4px ${theme.accent});animation:head ${DUR} steps(1,end) infinite}
 .target{animation:target ${DUR} steps(1,end) infinite}
-/* The hunted square strobes about three times a second, glowing in its own colour. */
-.target rect{filter:drop-shadow(0 0 5px currentColor);animation:strobe .32s steps(1,end) infinite}
-@keyframes strobe{0%{opacity:1}55%{opacity:0}}
+/* The hunted square strobes about three times a second, cycling the palette with a matching glow. */
+.target rect{filter:drop-shadow(0 0 5px currentColor);animation:strobe ${(0.32 * PALETTE.length).toFixed(2)}s steps(1,end) infinite}
+@keyframes strobe{${PALETTE.map((c, i) => `${((i * 100) / PALETTE.length).toFixed(2)}%{opacity:1;fill:${c};color:${c}}${(((i + 0.55) * 100) / PALETTE.length).toFixed(2)}%{opacity:0}`).join("")}100%{opacity:0}}
+/* Finale sweep: each cell flickers through three palette colours, diffusion-style, then clears. */
+.sw{opacity:0;animation:sweep ${DUR} steps(1,end) infinite}
+@keyframes sweep{0%{opacity:0}${[
+  ["opacity:.95;fill:var(--a)"], ["opacity:.25"], ["opacity:.9;fill:var(--b)"], ["opacity:.15"],
+  ["opacity:.75;fill:var(--c)"], ["opacity:.35;fill:var(--a)"], ["opacity:.12"], ["opacity:0"],
+].map(([v], i) => `${pct(T + 6 + i)}{${v}}`).join("")}100%{opacity:0}}
 ${keyframes(
   "target",
   (t) => (t < T ? targets[t] : null),
   (k) => {
     if (!k) return "opacity:0";
     const [x, y] = k.split(",").map(Number);
-    return `opacity:1;transform:translate(${cx(x) - CELL / 2}px,${cy(y) - CELL / 2}px);fill:${colourOf(x, y)};color:${colourOf(x, y)}`;
+    return `opacity:1;transform:translate(${cx(x) - CELL / 2}px,${cy(y) - CELL / 2}px)`;
   },
 )}
 ${keyframes("head", (t) => path[Math.min(t, T - 1) + START_LEN - 1], ([x, y]) => `transform:translate(${cx(x) - CELL / 2}px,${cy(y) - CELL / 2}px)`)}
@@ -422,6 +439,7 @@ text.ro:not([style]){opacity:1}
 </style>
 <g fill="${theme.dots[0]}">${board}</g>
 ${foods}
+<g>${sweep}</g>
 <g class="target" opacity="0"><rect width="${CELL}" height="${CELL}"/></g>
 <g class="snake" clip-path="url(#board)" mask="url(#body)">
 <path d="${trail}" fill="none" stroke="url(#paint)" stroke-width="${CELL}" stroke-dasharray="${CELL} ${GAP}" stroke-dashoffset="${CELL / 2}" stroke-linejoin="miter"/>
